@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="no" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bangelabing - Produkter, Tjenester, Kurs & Auksjon</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        },
+                        vipps: '#ff5b24',
+                        bring: '#e31b23'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-slate-800 bg-slate-50 flex flex-col min-h-screen">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-slate-900 text-slate-300 text-xs py-2 px-4 text-center font-medium flex justify-center items-center gap-2">
+        <span class="bg-emerald-500 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Nyhet</span>
+        <span>Meld deg på kurset <strong>"Trygg på Nett for Seniorer"</strong> – MVA-fritt og begrenset antall plasser!</span>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Logo -->
+            <a href="#" onclick="filterCategory('all')" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+                    b
+                </div>
+                <div>
+                    <span class="font-extrabold text-xl tracking-tight text-slate-900 block leading-none">bangelabing</span>
+                    <span class="text-[11px] text-slate-500 font-medium">Sikkerhet, Kurs & Utstyr</span>
+                </div>
+            </a>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden md:flex flex-1 max-w-md mx-6">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                    <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="Søk etter produkter, konsulenttimer eller kurs..." class="w-full pl-10 pr-4 py-2.5 bg-slate-100 hover:bg-slate-100/80 focus:bg-white border border-transparent focus:border-blue-500 rounded-xl text-sm transition focus:outline-none focus:ring-2 focus:ring-blue-100">
+                </div>
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCartDrawer()" class="relative bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2.5 shadow-md shadow-slate-900/10">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="hidden sm:inline">Handlekurv</span>
+                    <span id="cart-badge-count" class="bg-cyan-400 text-slate-950 text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Sub-header -->
+        <div class="border-t border-slate-100 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2 py-3 overflow-x-auto custom-scrollbar">
+                <div class="flex items-center gap-2">
+                    <button onclick="filterCategory('all')" id="btn-cat-all" class="cat-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-white transition whitespace-nowrap shadow-sm">
+                        <i class="fa-solid fa-border-all mr-1.5"></i> Alle tilbud
+                    </button>
+                    <button onclick="filterCategory('course')" id="btn-cat-course" class="cat-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
+                        <i class="fa-solid fa-graduation-cap text-emerald-600 mr-1.5"></i> Kurs & Opplæring
+                    </button>
+                    <button onclick="filterCategory('product')" id="btn-cat-product" class="cat-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
+                        <i class="fa-solid fa-box text-amber-500 mr-1.5"></i> Fysiske Produkter
+                    </button>
+                    <button onclick="filterCategory('service')" id="btn-cat-service" class="cat-tab-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
+                        <i class="fa-solid fa-handshake text-purple-600 mr-1.5"></i> Tjenester & Booking
+                    </button>
+                </div>
+
+                <!-- Navigation link to Auction Section -->
+                <button onclick="showAuctionSection()" id="btn-nav-auction" class="px-4 py-1.5 rounded-full text-xs font-extrabold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-md shadow-orange-500/20 transition whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-gavel"></i> Auksjonstorget <span class="bg-white/20 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">B-VARE / LAGER</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="bg-gradient-to-b from-slate-900 to-slate-950 text-white py-12 md:py-16 px-4 relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-blue-600/10 blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+            <div class="md:col-span-7 space-y-4 text-left">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                    <i class="fa-solid fa-shield-halved"></i> Din digitale trygghetspartner
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white">
+                    Kunnskap, utstyr og bistand for en <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">tryggere hverdag</span>
+                </h1>
+                <p class="text-slate-300 text-sm sm:text-base max-w-xl leading-relaxed">
+                    Hos bangelabing finner du alt fra praktisk phishing-opplæring tilpasset seniorer, til sikkerhetsutstyr og personlig rådgivning fra eksperter.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-4 text-xs font-medium text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-truck-fast text-cyan-400"></i> Rask levering med Bring / Porterbuddy
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-percent text-emerald-400"></i> MVA-fritt på alle sertifiserte kurs
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Highlight Card (Awareness Course for Seniors) -->
+            <div class="md:col-span-5">
+                <div class="bg-white/10 backdrop-blur-lg border border-white/15 rounded-3xl p-6 text-white shadow-2xl relative">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="bg-emerald-500 text-slate-950 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full">Anbefalt Kurs</span>
+                        <span class="text-xs font-mono text-cyan-300 font-semibold"><i class="fa-solid fa-calendar-days mr-1"></i> 18. Nov 2026</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Trygg på Nett: Phishing- & Svindelopplæring for Seniorer</h3>
+                    <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                        Et trygt og folkelig kurs for eldre som vil beskytte seg mot falske e-poster, SMS-svindel og BankID-feller.
+                    </p>
+                    <div class="flex items-center justify-between pt-3 border-t border-white/10">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase">Pris (0% MVA)</span>
+                            <span class="text-xl font-extrabold text-white">kr 990,-</span>
+                        </div>
+                        <button onclick="addToCart('CRS-302')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+                            <i class="fa-solid fa-user-plus"></i> Meld på kurs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Catalog Section -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- STANDARD CATALOG VIEW -->
+        <div id="catalog-view-container">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 id="catalog-heading" class="text-2xl font-extrabold text-slate-900 tracking-tight">Vår Varekatalog</h2>
+                    <p class="text-xs text-slate-500 mt-1">Velg blant fysiske produkter, rådgivningstjenester eller kurs.</p>
+                </div>
+                <div class="text-xs text-slate-500 font-medium">
+                    Viser <span id="item-count-label" class="font-bold text-slate-800">6</span> tilbud
+                </div>
+            </div>
+
+            <!-- Products & Courses Grid -->
+            <div id="store-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- AUCTION SECTION (Hidden by default, shown when clicking Auksjonstorget) -->
+        <div id="auction-view-container" class="hidden space-y-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">Lagersalg & Utgående Modeller</span>
+                        <span class="text-xs font-bold text-slate-400">• Gi bud direkte</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Auksjonstorget</h2>
+                    <p class="text-xs text-slate-500 mt-1">Gjør et kupp på overskuddsvarer, tidligere utstillingsmodeller eller produkter med høy veiledende pris.</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleAuctionModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-slate-900/10">
+                        <i class="fa-solid fa-plus-circle text-amber-400"></i> Legg ut ny auksjonsvare (Admin)
+                    </button>
+                    <button onclick="showCatalogSection()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Tilbake til butikken
+                    </button>
+                </div>
+            </div>
+
+            <!-- Auction Items Grid -->
+            <div id="auction-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- SLIDE-OVER CART DRAWER -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="toggleCartDrawer()"></div>
+        <div id="cart-panel" class="absolute inset-y-0 right-0 max-w-md w-full bg-white shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
+            <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-basket-shopping text-cyan-400"></i>
+                    <h3 class="font-extrabold text-base">Din Handlekurv</h3>
+                </div>
+                <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="cart-items-container" class="flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar">
+                <!-- Dynamic Cart Items -->
+            </div>
+
+            <div class="p-6 border-t border-slate-200 bg-slate-50 space-y-3">
+                <div class="space-y-1 text-xs">
+                    <div class="flex justify-between text-slate-500">
+                        <span>Netto ekskl. MVA:</span>
+                        <span id="cart-net-price" class="font-mono font-medium">kr 0,-</span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Beregnet MVA:</span>
+                        <span id="cart-vat-price" class="font-mono font-medium">kr 0,-</span>
+                    </div>
+                    <div class="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-200">
+                        <span>Totalt å betale:</span>
+                        <span id="cart-total-price" class="font-mono text-blue-600">kr 0,-</span>
+                    </div>
+                </div>
+
+                <button id="btn-proceed-checkout" onclick="openCheckoutModal()" disabled class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                    Gå til Kassen <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm hidden overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 my-8">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+                <div>
+                    <h3 class="text-xl font-extrabold text-slate-900">Gjennomfør Bestilling</h3>
+                    <p class="text-xs text-slate-500">Synkroniseres automatisk med betaling og regnskap</p>
+                </div>
+                <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleFinalOrderSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-1">Fullt Navn / Bedrift</label>
+                    <input type="text" id="cust-fullname" required placeholder="Ola Nordmann" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1">E-postadresse</label>
+                        <input type="email" id="cust-email" required placeholder="ola@example.no" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1">Mobilnummer</label>
+                        <input type="tel" id="cust-phone" required placeholder="900 00 000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- Shipping choice -->
+                <div id="checkout-shipping-block" class="pt-2">
+                    <label class="block text-slate-700 font-semibold mb-2">Velg Leveringsmetode (Bring / Porterbuddy)</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="border border-slate-200 rounded-xl p-3 flex items-center gap-2 cursor-pointer hover:bg-slate-50">
+                            <input type="radio" name="checkout_shipping" value="Bring Klimanøytral Pakke" checked class="text-blue-600">
+                            <div>
+                                <span class="font-bold text-slate-800 block">Bring Henteplass</span>
+                                <span class="text-[10px] text-slate-500">2-4 virkedager</span>
+                            </div>
+                        </label>
+                        <label class="border border-slate-200 rounded-xl p-3 flex items-center gap-2 cursor-pointer hover:bg-slate-50">
+                            <input type="radio" name="checkout_shipping" value="Porterbuddy Hjemlevering" class="text-blue-600">
+                            <div>
+                                <span class="font-bold text-slate-800 block">Porterbuddy</span>
+                                <span class="text-[10px] text-slate-500">På døren i kveld</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Payment choice -->
+                <div class="pt-2">
+                    <label class="block text-slate-700 font-semibold mb-2">Velg Betalingsløsning</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer hover:border-orange-500 bg-white">
+                            <input type="radio" name="checkout_payment" value="Vipps Hurtigkasse" checked class="mb-1 text-orange-500">
+                            <span class="font-bold text-orange-600 text-xs">Vipps</span>
+                        </label>
+                        <label class="border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-500 bg-white">
+                            <input type="radio" name="checkout_payment" value="Kort / Stripe" class="mb-1 text-blue-500">
+                            <span class="font-bold text-slate-800 text-xs">Kort (Stripe)</span>
+                        </label>
+                        <label class="border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center text-center cursor-pointer hover:border-pink-500 bg-white">
+                            <input type="radio" name="checkout_payment" value="Klarna Faktura" class="mb-1 text-pink-500">
+                            <span class="font-bold text-pink-600 text-xs">Klarna</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1 my-3">
+                    <div class="flex justify-between font-extrabold text-sm text-slate-900">
+                        <span>Total inkl. MVA:</span>
+                        <span id="modal-order-total" class="font-mono text-blue-600">kr 0,-</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl shadow-lg shadow-emerald-600/20 text-xs transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Fullfør Kjøp & Generer Regnskapsbilag
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CREATE AUCTION MODAL (Admin Form) -->
+    <div id="create-auction-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm hidden overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 my-8">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+                <div>
+                    <h3 class="text-xl font-extrabold text-slate-900">Opprett Ny Auksjon</h3>
+                    <p class="text-xs text-slate-500">Sett ut lagervarer eller kostbare produkter på budrunde</p>
+                </div>
+                <button onclick="toggleAuctionModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleCreateAuction(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-1">Produktnavn</label>
+                    <input type="text" id="auc-title" required placeholder="f.eks. Cisco Enterprise Firewall B-Vare" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-1">Årsak til Auksjon</label>
+                    <select id="auc-reason" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <option value="Ligget lenge på lager (Lagersalg)">Ligget lenge på lager (Lagersalg)</option>
+                        <option value="Høy ordinærpris / Eksklusiv vare">Høy ordinærpris / Eksklusiv vare</option>
+                        <option value="Demovare / Utstillingsmodell">Demovare / Utstillingsmodell</option>
+                        <option value="Renovert / B-Vare">Renovert / B-Vare</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1">Ordinær Veiledende Pris</label>
+                        <input type="number" id="auc-orig-price" required placeholder="15000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-1">Startbud (kr)</label>
+                        <input type="number" id="auc-start-price" required placeholder="1000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-1">Beskrivelse & Tilstand</label>
+                    <textarea id="auc-desc" rows="3" required placeholder="Beskriv varens tilstand, hvorfor den auksjoneres bort, og hva som følger med..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl shadow-lg shadow-amber-500/20 text-xs transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-gavel"></i> Publiser Auksjon
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ORDER RECEIPT / CONFIRMATION MODAL -->
+    <div id="receipt-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl text-center border border-slate-100">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-1">Takk for din bestilling!</h3>
+            <p class="text-xs text-slate-500 mb-6">Ordren er registrert og synkronisert mot vårt regnskapssystem.</p>
+
+            <div class="bg-slate-50 rounded-2xl p-4 text-left text-xs space-y-2 mb-6 border border-slate-200">
+                <div class="flex justify-between"><span class="text-slate-400">Ordrenummer:</span> <span id="rec-ord-id" class="font-mono font-bold text-slate-800">ORD-0000</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Kunde:</span> <span id="rec-cust-name" class="font-semibold text-slate-800">-</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Betalt med:</span> <span id="rec-payment" class="font-semibold text-slate-800">-</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Regnskap (Fiken):</span> <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-file-circle-check"></i> Bilag utstedt</span></div>
+                <div class="pt-2 border-t border-slate-200 flex justify-between font-bold text-sm text-slate-900">
+                    <span>Totalbeløp:</span>
+                    <span id="rec-total" class="font-mono text-blue-600">kr 0,-</span>
+                </div>
+            </div>
+
+            <button onclick="closeReceiptModal()" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition">
+                Fortsett å handle
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // DATA MODEL: Store Catalog
+        const catalogData = [
+            {
+                id: "CRS-302",
+                name: "Trygg på Nett: Phishing- & Svindelopplæring for Seniorer",
+                type: "course",
+                category: "Kurs & Opplæring",
+                price: 990,
+                mva: 0,
+                description: "Et tilpasset kurs for eldre som vil beskytte seg mot falske e-poster, SMS-svindel, falske telefonsamtaler og BankID-feller. MVA-fritt utdanningskurs.",
+                startDate: "18. Nov 2026",
+                seatsLeft: 12,
+                badge: "MVA-Fritt Kurs",
+                icon: "fa-graduation-cap"
+            },
+            {
+                id: "CRS-301",
+                name: "Sikkerhetskurs: Avdekking av Phishing & Svindel",
+                type: "course",
+                category: "Kurs & Opplæring",
+                price: 2490,
+                mva: 0,
+                description: "Interaktivt bedriftskurs som lærer de ansatte å kjenne igjen sofistikerte e-poster, falske påloggingssider og direktørsvindel.",
+                startDate: "24. Nov 2026",
+                seatsLeft: 8,
+                badge: "MVA-Fritt Kurs",
+                icon: "fa-shield-halved"
+            },
+            {
+                id: "PROD-103",
+                name: "YubiKey 5 NFC Sikkerhetsnøkkel",
+                type: "product",
+                category: "Fysiske Produkter",
+                price: 790,
+                mva: 25,
+                description: "Fysisk 2-faktor sikkerhetsnøkkel for maksimal beskyttelse av e-post og BankID mot phishing-angrep.",
+                stock: 45,
+                badge: "Populær",
+                icon: "fa-key"
+            },
+            {
+                id: "PROD-101",
+                name: "HD Wi-Fi Sikkerhetskamera med Nattsyn",
+                type: "product",
+                category: "Fysiske Produkter",
+                price: 1290,
+                mva: 25,
+                description: "Kompakt innendørs kamera med direkte varsling på mobil, toveis tale og sikker kryptert skylagring.",
+                stock: 18,
+                badge: "Fysisk Vare",
+                icon: "fa-video"
+            },
+            {
+                id: "SERV-203",
+                name: "Sikkerhetssjekk av Hjemmenettverk",
+                type: "service",
+                category: "Tjenester & Booking",
+                price: 1490,
+                mva: 25,
+                description: "En ekspert hjelper deg (eller dine foreldre) med å gå gjennom ruter, passord, PC og mobil for å sikre at ingen uvedkommende har tilgang.",
+                duration: "1.5 timer",
+                badge: "Konsulenttjeneste",
+                icon: "fa-user-shield"
+            },
+            {
+                id: "SERV-201",
+                name: "Penetrasjonstest & Sårbarhetsanalyse",
+                type: "service",
+                category: "Tjenester & Booking",
+                price: 8500,
+                mva: 25,
+                description: "Grundig gjennomgang og kontroll av IT-infrastruktur og nettsider for å finne sårbarheter før hackere gjør det.",
+                duration: "1 Dag",
+                badge: "Tjeneste",
+                icon: "fa-bug-slash"
+            }
+        ];
+
+        // DATA MODEL: AUCTION ITEMS
+        let auctionData = [
+            {
+                id: "AUC-101",
+                title: "Enterprise Rack Firewall & UTM Router (2U)",
+                reason: "Ligget lenge på lager (Overlager)",
+                originalPrice: 28900,
+                currentBid: 3200,
+                bidCount: 7,
+                timeLeft: "04t 18m",
+                description: "Bedriftsbrannmur som ble liggende på lager etter et prosjektavbrudd. 100% Ubrukt i originaleske. Velegnet for bedrifter eller IT-entusiaster.",
+                icon: "fa-server",
+                highestBidder: "Kari N."
+            },
+            {
+                id: "AUC-102",
+                title: "Thermal Pro Sikkerhetskamera for Industri",
+                reason: "Høy ordinærpris / Nedsatt til bud",
+                originalPrice: 42000,
+                currentBid: 12500,
+                bidCount: 14,
+                timeLeft: "01d 08t",
+                description: "Høytytende termisk kamera for perimetersikring. Har hatt høy terskel for salg pga ordinærpris. Nå auksjoneres det bort uten minstepris!",
+                icon: "fa-camera-rotate",
+                highestBidder: "Sikkerhet AS"
+            },
+            {
+                id: "AUC-103",
+                title: "Sikkerhetspakke for Småbedrifter (Kurs + 10x YubiKey)",
+                reason: "Pakkelager / Utstillingsmodell",
+                originalPrice: 14500,
+                currentBid: 2100,
+                bidCount: 4,
+                timeLeft: "06t 45m",
+                description: "Komplett pakke bestående av 10x fysiske Yubikey nøkler samt 2 timer digital gjennomgang med sikkerhetsekspert.",
+                icon: "fa-box-open",
+                highestBidder: "Per T."
+            }
+        ];
+
+        // CART STATE
+        let cart = [];
+
+        // INITIALIZATION
+        window.onload = function() {
+            renderStoreGrid(catalogData);
+            renderAuctionGrid();
+        };
+
+        function renderStoreGrid(items) {
+            const grid = document.getElementById('store-grid');
+            document.getElementById('item-count-label').textContent = items.length;
+
+            grid.innerHTML = items.map(item => {
+                let badgeColor = item.type === 'course' ? 'bg-emerald-100 text-emerald-800' : (item.type === 'product' ? 'bg-amber-100 text-amber-800' : 'bg-purple-100 text-purple-800');
+                
+                return `
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-xl transition-all duration-300 group">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${badgeColor}">
+                                ${item.badge}
+                            </span>
+                            <div class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid ${item.icon}"></i>
+                            </div>
+                        </div>
+
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">${item.category}</span>
+                        <h3 class="font-extrabold text-slate-900 text-base mb-2 leading-snug">${item.name}</h3>
+                        <p class="text-xs text-slate-500 mb-5 leading-relaxed">${item.description}</p>
+
+                        ${item.type === 'course' ? `
+                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-xs text-slate-700 mb-5 space-y-1">
+                                <div class="flex justify-between"><span>Oppstart:</span> <span class="font-bold text-slate-900">${item.startDate}</span></div>
+                                <div class="flex justify-between"><span>Kapasitet:</span> <span class="font-bold text-emerald-600">${item.seatsLeft} ledige plasser</span></div>
+                            </div>
+                        ` : ''}
+
+                        ${item.type === 'product' ? `
+                            <div class="text-xs text-slate-600 mb-5 flex items-center gap-2">
+                                <i class="fa-solid fa-boxes-stacked text-amber-500"></i> Lager: <span class="font-bold text-slate-800">${item.stock} på lager (Sendes raskt)</span>
+                            </div>
+                        ` : ''}
+
+                        ${item.type === 'service' ? `
+                            <div class="text-xs text-slate-600 mb-5 flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-purple-500"></i> Varighet: <span class="font-bold text-slate-800">${item.duration}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase">Pris (MVA ${item.mva}%)</span>
+                            <span class="text-xl font-black text-slate-900">kr ${item.price.toLocaleString('no-NO')},-</span>
+                        </div>
+                        <button onclick="addToCart('${item.id}')" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-2 shadow-md shadow-blue-600/20 active:scale-95">
+                            <i class="fa-solid fa-cart-plus"></i> ${item.type === 'course' ? 'Meld på' : (item.type === 'service' ? 'Book' : 'Kjøp')}
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // AUCTION RENDER & NAVIGATION LOGIC
+        function showAuctionSection() {
+            document.getElementById('catalog-view-container').classList.add('hidden');
+            document.getElementById('auction-view-container').classList.remove('hidden');
+            
+            document.querySelectorAll('.cat-tab-btn').forEach(btn => btn.classList.remove('bg-slate-900', 'text-white'));
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        function showCatalogSection() {
+            document.getElementById('auction-view-container').classList.add('hidden');
+            document.getElementById('catalog-view-container').classList.remove('hidden');
+            filterCategory('all');
+        }
+
+        function renderAuctionGrid() {
+            const grid = document.getElementById('auction-grid');
+            grid.innerHTML = auctionData.map(auc => `
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-orange-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                        <i class="fa-solid fa-clock mr-1"></i> ${auc.timeLeft} igjen
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+                                <i class="fa-solid ${auc.icon}"></i>
+                            </div>
+                            <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                                ${auc.reason}
+                            </span>
+                        </div>
+
+                        <h3 class="font-extrabold text-slate-900 text-base mb-1">${auc.title}</h3>
+                        <p class="text-xs text-slate-500 mb-4 leading-relaxed">${auc.description}</p>
+
+                        <div class="bg-slate-50 rounded-2xl p-3 border border-slate-100 mb-4 text-xs space-y-1.5">
+                            <div class="flex justify-between text-slate-400">
+                                <span>Førpris / Veiledende:</span>
+                                <span class="line-through font-mono">kr ${auc.originalPrice.toLocaleString('no-NO')},-</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-1 border-t border-slate-200/60">
+                                <span class="font-bold text-slate-700">Høyeste bud:</span>
+                                <span class="text-lg font-black text-amber-600 font-mono">kr ${auc.currentBid.toLocaleString('no-NO')},-</span>
+                            </div>
+                            <div class="flex justify-between text-[11px] text-slate-500">
+                                <span>Budgiver: <strong>${auc.highestBidder}</strong> (${auc.bidCount} bud)</span>
+                                <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Aktiv</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button onclick="placeBid('${auc.id}')" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md">
+                            <i class="fa-solid fa-gavel text-amber-400"></i> Gi Bud (Neste: kr ${(auc.currentBid + 200).toLocaleString('no-NO')},-)
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function placeBid(aucId) {
+            const auc = auctionData.find(a => a.id === aucId);
+            if(!auc) return;
+
+            const nextMinBid = auc.currentBid + 200;
+            const inputBid = prompt(`Høyeste bud nå er kr ${auc.currentBid.toLocaleString('no-NO')},-.\nSkriv inn ditt bud (Minimum kr ${nextMinBid.toLocaleString('no-NO')}):`, nextMinBid);
+
+            if(inputBid !== null) {
+                const numBid = parseInt(inputBid);
+                if(!isNaN(numBid) && numBid >= nextMinBid) {
+                    auc.currentBid = numBid;
+                    auc.bidCount++;
+                    auc.highestBidder = "Deg (Du leder!)";
+                    renderAuctionGrid();
+                } else {
+                    alert("Budet må være minst kr " + nextMinBid.toLocaleString('no-NO') + ",-");
+                }
+            }
+        }
+
+        function toggleAuctionModal() {
+            const modal = document.getElementById('create-auction-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function handleCreateAuction(e) {
+            e.preventDefault();
+            const title = document.getElementById('auc-title').value;
+            const reason = document.getElementById('auc-reason').value;
+            const origPrice = parseInt(document.getElementById('auc-orig-price').value);
+            const startPrice = parseInt(document.getElementById('auc-start-price').value);
+            const desc = document.getElementById('auc-desc').value;
+
+            const newAuction = {
+                id: "AUC-" + Math.floor(100 + Math.random() * 900),
+                title: title,
+                reason: reason,
+                originalPrice: origPrice,
+                currentBid: startPrice,
+                bidCount: 1,
+                timeLeft: "02d 00t",
+                description: desc,
+                icon: "fa-gavel",
+                highestBidder: "Startbud"
+            };
+
+            auctionData.unshift(newAuction);
+            renderAuctionGrid();
+            toggleAuctionModal();
+            e.target.reset();
+        }
+
+        // CATEGORY FILTER
+        function filterCategory(type) {
+            document.querySelectorAll('.cat-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+            });
+            
+            const activeBtn = document.getElementById(`btn-cat-${type}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+                activeBtn.classList.add('bg-slate-900', 'text-white');
+            }
+
+            if(type === 'all') {
+                renderStoreGrid(catalogData);
+                document.getElementById('catalog-heading').textContent = "Vår Varekatalog";
+            } else {
+                const filtered = catalogData.filter(i => i.type === type);
+                renderStoreGrid(filtered);
+                document.getElementById('catalog-heading').textContent = type === 'course' ? 'Kurs & Opplæring' : (type === 'product' ? 'Fysiske Produkter' : 'Tjenester & Booking');
+            }
+        }
+
+        // SEARCH FUNCTIONALITY
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = catalogData.filter(item => 
+                item.name.toLowerCase().includes(query) || 
+                item.description.toLowerCase().includes(query) ||
+                item.category.toLowerCase().includes(query)
+            );
+            renderStoreGrid(filtered);
+        }
+
+        // CART LOGIC
+        function addToCart(itemId) {
+            const item = catalogData.find(i => i.id === itemId);
+            if(!item) return;
+
+            const existing = cart.find(c => c.item.id === itemId);
+            if(existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ item: item, quantity: 1 });
+            }
+
+            updateCartUI();
+            toggleCartDrawer(true);
+        }
+
+        function updateCartQuantity(itemId, delta) {
+            const index = cart.findIndex(c => c.item.id === itemId);
+            if(index !== -1) {
+                cart[index].quantity += delta;
+                if(cart[index].quantity <= 0) {
+                    cart.splice(index, 1);
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const badge = document.getElementById('cart-badge-count');
+            const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
+            
+            badge.textContent = totalQty;
+
+            if(cart.length === 0) {
+                container.innerHTML = `
+                    <div class="h-64 flex flex-col items-center justify-center text-slate-400 text-center">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-3"></i>
+                        <p class="text-sm">Handlekurven din er tom.</p>
+                    </div>
+                `;
+                document.getElementById('btn-proceed-checkout').disabled = true;
+                document.getElementById('cart-net-price').textContent = "kr 0,-";
+                document.getElementById('cart-vat-price').textContent = "kr 0,-";
+                document.getElementById('cart-total-price').textContent = "kr 0,-";
+                return;
+            }
+
+            document.getElementById('btn-proceed-checkout').disabled = false;
+
+            let grandTotal = 0;
+            let totalVat = 0;
+            let totalNet = 0;
+
+            container.innerHTML = cart.map(c => {
+                const itemTotal = c.item.price * c.quantity;
+                const vatPart = c.item.mva > 0 ? (itemTotal * (c.item.mva / (100 + c.item.mva))) : 0;
+                const netPart = itemTotal - vatPart;
+
+                grandTotal += itemTotal;
+                totalVat += vatPart;
+                totalNet += netPart;
+
+                return `
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                        <div class="flex-1">
+                            <span class="text-[10px] font-bold uppercase text-slate-400 block">${c.item.category}</span>
+                            <h4 class="font-bold text-slate-800 text-xs">${c.item.name}</h4>
+                            <div class="text-xs font-mono font-bold text-slate-900 mt-1">kr ${c.item.price.toLocaleString('no-NO')},-</div>
+                        </div>
+
+                        <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-2 py-1">
+                            <button onclick="updateCartQuantity('${c.item.id}', -1)" class="text-slate-500 hover:text-slate-800 text-xs px-1.5 font-bold">-</button>
+                            <span class="text-xs font-bold text-slate-800 font-mono w-4 text-center">${c.quantity}</span>
+                            <button onclick="updateCartQuantity('${c.item.id}', 1)" class="text-slate-500 hover:text-slate-800 text-xs px-1.5 font-bold">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cart-net-price').textContent = `kr ${Math.round(totalNet).toLocaleString('no-NO')},-`;
+            document.getElementById('cart-vat-price').textContent = `kr ${Math.round(totalVat).toLocaleString('no-NO')},-`;
+            document.getElementById('cart-total-price').textContent = `kr ${grandTotal.toLocaleString('no-NO')},-`;
+        }
+
+        function toggleCartDrawer(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            const panel = document.getElementById('cart-panel');
+
+            if(forceOpen || drawer.classList.contains('opacity-0')) {
+                drawer.classList.remove('pointer-events-none', 'opacity-0');
+                panel.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('pointer-events-none', 'opacity-0');
+                panel.classList.add('translate-x-full');
+            }
+        }
+
+        // CHECKOUT MODAL LOGIC
+        function openCheckoutModal() {
+            toggleCartDrawer(false);
+            
+            const summaryContainer = document.getElementById('modal-order-summary-items');
+            let total = 0;
+            let hasPhysicalProduct = false;
+
+            cart.forEach(c => {
+                total += c.item.price * c.quantity;
+                if(c.item.type === 'product') hasPhysicalProduct = true;
+            });
+
+            document.getElementById('modal-order-total').textContent = `kr ${total.toLocaleString('no-NO')},-`;
+            
+            const shippingBlock = document.getElementById('checkout-shipping-block');
+            if(hasPhysicalProduct) {
+                shippingBlock.classList.remove('hidden');
+            } else {
+                shippingBlock.classList.add('hidden');
+            }
+
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        // FINAL SUBMIT & RECEIPT
+        function handleFinalOrderSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('cust-fullname').value;
+            const payment = document.querySelector('input[name="checkout_payment"]:checked').value;
+            const totalText = document.getElementById('modal-order-total').textContent;
+
+            const orderId = "ORD-" + Math.floor(1000 + Math.random() * 9000);
+
+            document.getElementById('rec-ord-id').textContent = orderId;
+            document.getElementById('rec-cust-name').textContent = name;
+            document.getElementById('rec-payment').textContent = payment;
+            document.getElementById('rec-total').textContent = totalText;
+
+            closeCheckoutModal();
+            document.getElementById('receipt-modal').classList.remove('hidden');
+
+            cart = [];
+            updateCartUI();
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receipt-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
